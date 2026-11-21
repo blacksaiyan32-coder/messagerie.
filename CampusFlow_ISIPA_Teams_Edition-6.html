@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#464eb8">
+<title>CampusFlow.ISIPA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f5f5;--surface:#fff;--ink:#242424;--muted:#616161;--brand:#5b5fc7;--dark:#464eb8;--accent:#e4572e;--line:#e0e0e0;--rail:#ebebeb;--side:#f0f0f0;--mine:#e8ebfa;--hover:#e3e3f4;--r:8px;--ok:#13a10e;
+--title:"Cormorant Garamond",Georgia,serif;--body:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#1f1f1f;--surface:#292929;--ink:#f5f5f5;--muted:#adadad;--brand:#7f85f5;--line:#3d3d3d;--rail:#141414;--side:#1f1f1f;--mine:#3b3f7a;--hover:#383838}}
+:root[data-theme=dark]{--bg:#1f1f1f;--surface:#292929;--ink:#f5f5f5;--muted:#adadad;--brand:#7f85f5;--line:#3d3d3d;--rail:#141414;--side:#1f1f1f;--mine:#3b3f7a;--hover:#383838}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.4;-webkit-tap-highlight-color:transparent}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.hidden{display:none!important}
+#auth{min-height:100%;display:grid;place-items:center;padding:calc(24px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));background:linear-gradient(135deg,#2b2f7a,#5b5fc7 55%,#e4572e 140%);background-size:200% 200%;animation:flow 14s ease infinite}
+@keyframes flow{50%{background-position:100% 100%}}
+.auth-box{width:100%;max-width:400px;animation:up .5s ease-out}
+@keyframes up{from{transform:translateY(16px);opacity:0}}
+.logo{font-family:var(--title);font-variant-caps:all-small-caps;font-weight:700;font-size:clamp(30px,9vw,42px);line-height:1;letter-spacing:.14em;color:#fff}
+.tagline{margin:10px 0 22px;color:#e6e8ff;font-size:15px}
+.card{background:var(--surface);border-radius:12px;padding:22px;box-shadow:0 12px 36px rgba(0,0,0,.3)}
+.tabs{display:flex;border-bottom:1px solid var(--line);margin-bottom:18px}
+.tabs button{flex:1;border:0;background:none;padding:10px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent}
+.tabs button[aria-selected=true]{color:var(--brand);border-bottom-color:var(--brand)}
+label{display:block;font-size:13px;font-weight:600;margin:0 0 5px}
+.field{margin-bottom:14px}
+input[type=text],input[type=email],input[type=password]{width:100%;padding:10px 12px;border-radius:6px;border:1px solid var(--line);border-bottom:2px solid var(--muted);background:var(--surface);font-size:15px}
+input:focus{border-bottom-color:var(--brand);outline:none}
+.primary{width:100%;border:0;border-radius:6px;padding:11px;font-weight:600;font-size:15px;cursor:pointer;background:var(--dark);color:#fff}
+.primary:hover{background:var(--brand)}.primary:disabled{opacity:.6}
+.error{color:#c4314b;font-size:13px;margin:0 0 12px}
+.signature{margin-top:24px;text-align:center;font-family:var(--title);font-variant-caps:all-small-caps;font-size:15px;font-weight:600;letter-spacing:.18em;color:#e6e8ff}
+.signature::before{content:"";display:block;width:28px;height:2px;margin:0 auto 10px;background:var(--accent);border-radius:2px}
+.signature span{color:#fff}
+#chat{height:100dvh;display:grid;grid-template-rows:auto 1fr;grid-template-columns:68px 290px 1fr;background:var(--bg)}
+header{grid-column:1/-1;display:flex;align-items:center;gap:12px;padding:calc(6px + env(safe-area-inset-top)) 14px 6px;background:linear-gradient(90deg,#3a41a8,#5b5fc7);color:#fff}
+.hlogo{font-family:var(--title);font-variant-caps:all-small-caps;font-size:20px;font-weight:700;letter-spacing:.12em;white-space:nowrap}
+#q{flex:1;max-width:520px;margin:0 auto;background:rgba(255,255,255,.18);border:1px solid transparent;border-radius:6px;padding:7px 12px;color:#fff;font-size:13px}
+#q::placeholder{color:#e6e8ff}#q:focus{background:#fff;color:#242424;outline:none}
+.me{display:flex;align-items:center;gap:8px;margin-left:auto}
+.me small{font-size:13px}
+.avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:600;font-size:13px;background:var(--accent);color:#fff;flex:none;position:relative}
+.ghost{border:1px solid rgba(255,255,255,.5);background:none;color:#fff;padding:5px 10px;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px}
+.ghost:hover{background:rgba(255,255,255,.18)}
+.rail{background:var(--rail);display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 0;border-right:1px solid var(--line)}
+.rail button{width:56px;padding:8px 0 6px;border:0;background:none;border-radius:6px;font-size:11px;color:var(--muted);position:relative;cursor:pointer}
+.rail button:hover{background:var(--hover)}
+.rail svg{display:block;margin:0 auto 2px}
+.rail .on{color:var(--brand);font-weight:600}
+.rail .on::before{content:"";position:absolute;left:-6px;top:10px;bottom:10px;width:3px;border-radius:3px;background:var(--brand)}
+.rail .sp{margin-top:auto}
+aside{background:var(--side);border-right:1px solid var(--line);padding:14px 10px;overflow:auto;display:flex;flex-direction:column}
+aside h2{font-size:20px;font-weight:700;padding:0 8px 12px}
+aside h3{font-size:12px;font-weight:600;color:var(--muted);padding:12px 8px 4px}
+.item{display:flex;align-items:center;gap:10px;padding:8px;border-radius:6px}
+.item.on{background:var(--hover);box-shadow:inset 3px 0 0 var(--brand)}
+.item b{font-weight:600;display:block}.item span{font-size:12px;color:var(--muted)}
+.ch{width:32px;height:32px;border-radius:6px;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:700;flex:none}
+.dot{position:absolute;right:-2px;bottom:-2px;width:11px;height:11px;border-radius:50%;background:var(--ok);border:2px solid var(--side)}
+.credit{margin-top:auto;padding:14px 8px 0;text-align:center;font-family:var(--title);font-variant-caps:all-small-caps;letter-spacing:.14em;font-size:13px;color:var(--muted)}
+.credit b{color:var(--ink)}
+#pane{display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--surface);position:relative}
+#pane.drag::after{content:"Dépose ton fichier ici";position:absolute;inset:8px;border:3px dashed var(--brand);border-radius:12px;background:color-mix(in srgb,var(--surface) 88%,transparent);display:grid;place-items:center;font-size:20px;font-weight:700;color:var(--brand);z-index:5}
+.top{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line)}
+.top h1{font-size:16px;font-weight:700}.top small{color:var(--muted);font-size:12px;display:block;font-weight:400}
+.ptabs{display:flex;gap:16px;margin-left:16px}
+.ptabs button{border:0;background:none;color:var(--muted);cursor:pointer;padding:0 0 6px;margin-bottom:-11px;border-bottom:3px solid transparent}
+.ptabs .on{color:var(--ink);font-weight:600;border-bottom-color:var(--brand)}
+.cnt{margin-left:auto;font-size:12px;color:var(--ok);font-weight:600}
+#list{flex:1;overflow-y:auto;padding:12px 16px 6px;display:flex;flex-direction:column;gap:2px;overscroll-behavior:contain;background:var(--bg)}
+.day{display:flex;align-items:center;gap:12px;margin:14px 0 8px;font-size:12px;font-weight:600;color:var(--muted)}
+.day::before,.day::after{content:"";flex:1;height:1px;background:var(--line)}
+.row{display:flex;gap:10px;align-items:flex-end;max-width:78%;align-self:flex-start;animation:pop .2s ease-out}
+@keyframes pop{from{transform:translateY(8px) scale(.97);opacity:0}}
+@media (prefers-reduced-motion:reduce){.row,.auth-box,#auth{animation:none}}
+.row.me{align-self:flex-end;flex-direction:row-reverse}.row.first{margin-top:10px}
+.av{width:32px;flex:none}
+.msg{padding:7px 12px 5px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);overflow-wrap:anywhere;min-width:0;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.row.me .msg{background:var(--mine);border-color:transparent}
+.meta{display:flex;gap:8px;align-items:baseline;margin-bottom:2px}
+.who{font-size:12px;font-weight:600}.time{font-size:11.5px;color:var(--muted)}
+.txt{white-space:pre-wrap}.txt a{color:var(--brand);text-decoration:underline}
+.men{background:rgba(91,95,199,.2);color:var(--brand);border-radius:4px;padding:0 3px;font-weight:600}
+.msg img{display:block;max-width:100%;max-height:300px;border-radius:6px;margin:4px 0;cursor:zoom-in}
+.file{display:flex;align-items:center;gap:10px;padding:9px 12px;margin:4px 0;border-radius:6px;text-decoration:none;background:rgba(127,127,127,.14);color:inherit;font-weight:600;font-size:13px}
+#pane.files .row:not(.hasfile){display:none}
+.empty{margin:auto;text-align:center;color:var(--muted);max-width:28ch}
+#down{position:absolute;right:24px;bottom:84px;border:0;border-radius:99px;background:var(--brand);color:#fff;padding:8px 14px;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+#composer{margin:8px 16px calc(12px + env(safe-area-inset-bottom));border:1px solid var(--line);border-bottom:2px solid var(--brand);border-radius:var(--r);background:var(--surface);display:flex;align-items:flex-end;gap:2px;padding:4px 6px;position:relative}
+#text{flex:1;resize:none;max-height:140px;padding:9px 8px;border:0;background:none;font-size:15px;line-height:1.35;outline:none}
+.round{flex:none;width:38px;height:38px;border-radius:6px;border:0;display:grid;place-items:center;cursor:pointer;background:none;color:var(--muted);font-size:20px}
+.round:hover{background:var(--hover)}.round:disabled{opacity:.5}
+#send{color:var(--brand)}
+#emp{position:absolute;bottom:52px;left:44px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px;display:grid;grid-template-columns:repeat(6,1fr);gap:2px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:4}
+#emp button{border:0;background:none;font-size:22px;padding:4px;border-radius:6px;cursor:pointer}#emp button:hover{background:var(--hover)}
+#lb{position:fixed;inset:0;background:rgba(0,0,0,.88);display:grid;place-items:center;z-index:20;cursor:zoom-out}
+#lb img{max-width:94vw;max-height:90vh;border-radius:8px}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:6px;font-size:13px;font-weight:600;max-width:90%;text-align:center;z-index:30}
+@media (max-width:900px){#chat{grid-template-columns:1fr}.rail,aside,.ptabs{display:none}.row{max-width:90%}.hlogo,.me small{display:none}}
+@media (min-width:901px) and (max-width:1100px){#chat{grid-template-columns:68px 1fr}aside{display:none}}
+#typing{height:18px;margin:0 20px -4px;font-size:12px;color:var(--muted);font-style:italic}
+.cp{position:absolute;top:-10px;right:6px;border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:2px 7px;font-size:12px;cursor:pointer;opacity:0;transition:opacity .15s}
+.msg{position:relative}.msg:hover .cp{opacity:1}
+#bnav{display:none;background:var(--rail);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+#bnav button{flex:1;border:0;background:none;padding:9px 0;font-size:11px;color:var(--muted)}
+#bnav .on{color:var(--brand);font-weight:600}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:40}
+@media (max-width:900px){#chat{grid-template-rows:auto 1fr auto}#bnav{display:flex}}
+
+/* ===== CAMPUSFLOW — interface inspirée de Microsoft Teams ===== */
+:root{
+  --bg:#f5f5f7;--surface:#fff;--ink:#242424;--muted:#616161;
+  --brand:#6264a7;--dark:#464775;--accent:#d7a7ff;--line:#e5e5eb;
+  --rail:#f1f1f4;--side:#faf9fd;--mine:#eeebf8;--hover:#eceaf5;
+  --r:10px;--ok:#13a10e;--title:"Segoe UI",system-ui,sans-serif;
+  --body:"Segoe UI",system-ui,-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif
+}
+*{scrollbar-width:thin;scrollbar-color:#c8c7d2 transparent}
+body{background:var(--bg);letter-spacing:.005em}
+button{transition:background .16s ease,border-color .16s ease,transform .16s ease}
+button:active{transform:scale(.98)}
+#auth{
+  background:
+    radial-gradient(ellipse at 12% 15%,rgba(205,173,255,.25),transparent 34%),
+    radial-gradient(ellipse at 90% 90%,rgba(98,100,167,.35),transparent 35%),
+    linear-gradient(135deg,#292a50,#464775 58%,#6264a7);
+}
+.auth-box{max-width:440px}
+.logo{font-family:var(--body);font-variant-caps:normal;font-size:clamp(28px,7vw,38px);letter-spacing:-1.5px;font-weight:750}
+.logo:before{content:"✦";display:inline-grid;place-items:center;width:34px;height:34px;margin-right:10px;border-radius:10px;background:#fff;color:#6264a7;font-size:20px;vertical-align:4px}
+.tagline{font-size:14px;color:#e6e5f6;margin:12px 0 25px}
+.card{border-radius:16px;padding:26px;box-shadow:0 22px 65px rgba(12,12,35,.28)}
+.tabs button{font-size:14px}
+input[type=text],input[type=email],input[type=password]{border:1px solid var(--line);border-radius:8px;padding:12px;background:#fbfbfd}
+input:focus{border:1px solid var(--brand);box-shadow:0 0 0 3px rgba(98,100,167,.12)}
+.primary{border-radius:8px;background:#6264a7;padding:12px}
+.signature{font-family:var(--body);font-variant-caps:normal;letter-spacing:.04em;font-size:12px;color:#deddf2}
+.signature span{font-weight:700}
+#chat{
+  grid-template-columns:70px 276px minmax(0,1fr);
+  grid-template-rows:58px minmax(0,1fr);
+  background:var(--surface)
+}
+header{
+  min-height:58px;gap:16px;padding:0 20px;
+  background:#464775!important;color:#fff;
+  box-shadow:0 1px 3px rgba(0,0,0,.12);z-index:2
+}
+.hlogo{font-family:var(--body);font-variant-caps:normal;font-size:18px;letter-spacing:-.45px;font-weight:700}
+.hlogo:before{content:"✦";display:inline-grid;place-items:center;width:28px;height:28px;margin-right:9px;border-radius:7px;background:#fff;color:#464775;font-size:17px;vertical-align:-4px}
+#q{
+  max-width:520px;height:36px;padding:8px 14px 8px 38px;
+  border:1px solid rgba(255,255,255,.22);border-radius:7px;
+  background:rgba(255,255,255,.13);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23eeeeff' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-4-4'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:12px center
+}
+#q::placeholder{color:#e1e0f1}
+#q:focus{background-color:#fff;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%236464a7' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-4-4'/%3E%3C/svg%3E")}
+.me{gap:10px}
+.me small{font-weight:600}
+.avatar{background:#7778b8;border:2px solid rgba(255,255,255,.55)}
+.ghost{border-color:rgba(255,255,255,.28);border-radius:7px}
+.rail{grid-column:1;grid-row:2;background:#f4f3f8;padding:14px 7px;gap:8px;border-right:1px solid #e8e7ee}
+.rail button{width:56px;padding:10px 2px 8px;border-radius:9px;font-size:10.5px;font-weight:500}
+.rail button:hover{background:#e9e7f2}
+.rail .on{color:#464775;background:#e9e7f2}
+.rail .on::before{left:-7px;top:12px;bottom:12px;width:3px;background:#6264a7}
+.rail svg{width:22px;height:22px;margin-bottom:5px}
+aside{
+  grid-column:2;grid-row:2;background:#faf9fc;padding:22px 13px 14px;
+  border-right:1px solid #e8e7ee;gap:2px
+}
+aside h2{font-size:20px;letter-spacing:-.5px;padding:0 10px 18px}
+aside h3{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:#77758a;padding:16px 10px 7px}
+.item{padding:9px 10px;border-radius:8px;min-height:48px}
+.item:hover{background:#f0eff6}
+.item.on{background:#eceaf5;box-shadow:inset 3px 0 #6264a7}
+.item b{font-size:13px}
+.item span{font-size:11px}
+.ch{width:34px;height:34px;border-radius:9px;background:#6264a7}
+.credit{font-family:var(--body);font-variant-caps:normal;letter-spacing:0;font-size:11px;border-top:1px solid var(--line);padding-top:16px}
+#pane{grid-column:3;grid-row:2;background:#fff}
+.top{min-height:76px;padding:14px 24px;border-bottom:1px solid #e9e8ef;gap:12px;background:#fff}
+.top .ch{width:38px;height:38px;border-radius:10px}
+.top h1{font-size:16px;letter-spacing:-.2px}
+.top h1 small{font-size:12px;margin-top:2px;color:#77758a}
+.ptabs{gap:22px;margin-left:24px;align-self:stretch;align-items:center}
+.ptabs button{font-size:13px;padding:0 2px 9px;margin-bottom:-15px}
+.ptabs .on{color:#464775;border-bottom-color:#6264a7}
+.cnt{font-size:11px;background:#eef7ed;color:#237a28;border-radius:20px;padding:5px 10px}
+#list{padding:18px clamp(16px,3vw,42px) 12px;gap:4px;background:#fff}
+.day{margin:18px 0 10px;font-size:11px;text-transform:uppercase;letter-spacing:.07em}
+.day:before,.day:after{background:#ecebf1}
+.row{max-width:min(78%,760px);gap:9px;margin:2px 0}
+.row.me{max-width:min(78%,760px)}
+.av{width:34px}
+.av .avatar{width:30px;height:30px;border:0;font-size:12px}
+.msg{padding:9px 13px 8px;border-radius:3px 11px 11px 11px;border:1px solid #ecebf1;box-shadow:0 1px 2px rgba(0,0,0,.035)}
+.row.me .msg{background:#f1eff8;border-color:#f1eff8;border-radius:11px 3px 11px 11px}
+.who{font-size:12px;color:#464775!important}
+.time{font-size:10.5px}
+.txt{font-size:13.5px;line-height:1.5}
+.txt a{color:#5557a5}
+.msg img{border-radius:8px}
+.file{border-radius:8px;border:1px solid var(--line)}
+#down{right:28px;bottom:88px;background:#464775;border-radius:8px;font-size:12px}
+#typing{margin:0 28px 0;font-size:11px}
+#composer{
+  margin:10px clamp(14px,3vw,42px) calc(16px + env(safe-area-inset-bottom));
+  border:1px solid #d9d8e2;border-bottom:2px solid #7778b8;border-radius:10px;
+  padding:5px 7px;box-shadow:0 2px 7px rgba(20,20,45,.05)
+}
+#composer:focus-within{border-color:#7778b8;box-shadow:0 0 0 3px rgba(98,100,167,.10)}
+#text{font-size:14px;padding:10px}
+.round{border-radius:8px;width:36px;height:36px}
+#send{background:#6264a7;color:white;margin:1px}
+#send:hover{background:#464775}
+#emp{bottom:58px;left:48px;border-radius:12px}
+#bnav{background:#faf9fc;border-top:1px solid #e8e7ee}
+#bnav button{font-size:10px;padding:8px 0}
+#bnav .on{color:#464775}
+#toast{border-radius:9px;box-shadow:0 5px 20px rgba(0,0,0,.2)}
+#lb{backdrop-filter:blur(8px)}
+/* Thème sombre harmonisé */
+:root[data-theme=dark]{
+ --bg:#181820;--surface:#22222c;--ink:#f3f2f8;--muted:#b2afc2;
+ --brand:#9294dc;--dark:#6264a7;--line:#393846;--rail:#20202a;
+ --side:#24232e;--mine:#39374d;--hover:#343244
+}
+:root[data-theme=dark] #pane,:root[data-theme=dark] .top,:root[data-theme=dark] #list{background:#22222c}
+:root[data-theme=dark] aside,:root[data-theme=dark] .rail,:root[data-theme=dark] #bnav{background:#1d1d27}
+:root[data-theme=dark] .msg{background:#292936;border-color:#3b3949}
+:root[data-theme=dark] .row.me .msg{background:#39374d;border-color:#39374d}
+:root[data-theme=dark] #composer{background:#292936;border-color:#49475a}
+:root[data-theme=dark] input[type=text],:root[data-theme=dark] input[type=email],:root[data-theme=dark] input[type=password]{background:#292936;color:#f3f2f8}
+:root[data-theme=dark] .item.on,:root[data-theme=dark] .item:hover{background:#343244}
+@media(max-width:900px){
+ #chat{grid-template-columns:1fr;grid-template-rows:54px minmax(0,1fr) auto}
+ header{padding:0 13px;gap:10px;min-height:54px}
+ .hlogo{font-size:16px}
+ #q{height:34px;min-width:0}
+ .me{gap:6px}
+ .me .avatar{width:30px;height:30px}
+ .ghost{font-size:11px;padding:5px 7px}
+ #pane{grid-column:1;grid-row:2}
+ .top{min-height:64px;padding:10px 14px}
+ .top .ch{width:34px;height:34px}
+ .top h1{font-size:14px}
+ .ptabs{display:flex;gap:14px;margin-left:auto}
+ .ptabs button{font-size:11px}
+ .cnt{display:none}
+ #list{padding:12px 12px 8px}
+ .row,.row.me{max-width:94%}
+ #composer{margin:8px 10px calc(9px + env(safe-area-inset-bottom))}
+ #bnav{grid-row:3}
+}
+@media(max-width:420px){
+ .hlogo{font-size:0}
+ .hlogo:before{font-size:17px;margin-right:0}
+ #q{font-size:11px;padding-left:32px;background-position:9px center}
+ .me small{display:none}
+ .ghost{font-size:10px}
+ .top{gap:8px}
+ .ptabs{gap:10px}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+</style>
+</head>
+<body>
+<main id="auth" class="hidden">
+  <div class="auth-box">
+    <div class="logo">CampusFlow.ISIPA</div>
+    <p class="tagline">L’espace de communication et de collaboration de la communauté ISIPA.</p>
+    <div class="card">
+      <div class="tabs" role="tablist">
+        <button type="button" role="tab" id="tab-login" aria-selected="true">Se connecter</button>
+        <button type="button" role="tab" id="tab-signup" aria-selected="false">Créer un compte</button>
+      </div>
+      <form id="authForm">
+        <div class="field hidden" id="pseudoField"><label for="pseudo">Pseudo</label><input id="pseudo" type="text" maxlength="24" autocomplete="nickname"></div>
+        <div class="field"><label for="email">Adresse e-mail</label><input id="email" type="email" autocomplete="email" required></div>
+        <div class="field"><label for="password">Mot de passe (6 caractères minimum)</label><input id="password" type="password" minlength="6" autocomplete="current-password" required></div>
+        <p class="error" id="authError" role="alert"></p>
+        <button class="primary" id="authBtn" type="submit">Se connecter</button>
+      </form>
+    </div>
+    <p class="signature">Created by <span>Winnie Kikumbila Lemba</span></p>
+  </div>
+</main>
+<div id="chat" class="hidden">
+  <header>
+    <div class="hlogo">CampusFlow.ISIPA</div>
+    <input id="q" type="search" placeholder="Rechercher dans CampusFlow" aria-label="Rechercher">
+    <div class="me"><small id="meName"></small><div class="avatar" id="meAvatar">?</div><button class="ghost" id="logout" type="button">Déconnexion</button></div>
+  </header>
+  <nav class="rail">
+    <button class="on" type="button" id="nChat"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>Chat</button>
+    <button type="button" id="nFiles"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>Fichiers</button>
+    <button type="button" id="accent" class="sp"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><circle cx="8" cy="9" r="3" /><circle cx="16" cy="9" r="3" opacity=".6"/><circle cx="12" cy="16" r="3" opacity=".3"/></svg>Couleur</button>
+    <button type="button" id="theme"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18" /><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>Thème</button>
+  </nav>
+  <aside>
+    <h2>Discussions</h2>
+    <h3>Canaux favoris</h3>
+    <div class="item on"><div class="ch">#</div><div><b>Général</b><span>Communauté ISIPA</span></div></div>
+    <h3 id="onTitle">En ligne</h3>
+    <div id="online"></div>
+    <div class="credit">Created by <b>Winnie Kikumbila Lemba</b></div>
+  </aside>
+  <main id="pane">
+    <div class="top">
+      <div class="ch">#</div>
+      <h1>Général<small>CampusFlow.ISIPA</small></h1>
+      <div class="ptabs"><button class="on" id="tPub" type="button">Publications</button><button id="tFil" type="button">Fichiers</button></div>
+      <div class="cnt" id="cnt"></div>
+    </div>
+    <div id="list" aria-live="polite"></div>
+    <button id="down" class="hidden" type="button">↓ Nouveaux messages</button>
+    <div id="typing" aria-live="polite"></div>
+    <form id="composer">
+      <input type="file" id="fileInput" class="hidden">
+      <button class="round" id="attach" type="button" aria-label="Envoyer un fichier"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.4 11.1l-9.2 9.2a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5"/></svg></button>
+      <button class="round" id="emo" type="button" aria-label="Emojis">😊</button>
+      <div id="emp" class="hidden"></div>
+      <textarea id="text" rows="1" placeholder="Saisissez un message" aria-label="Message"></textarea>
+      <button class="round" id="send" type="submit" aria-label="Envoyer le message"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a1 1 0 0 0-1.4 1.2L4 10.5l9 1.5-9 1.5-2 5.7a1 1 0 0 0 1.4 1.2z"/></svg></button>
+    </form>
+  </main>
+</div>
+<nav id="bnav"><button id="bChat" class="on" type="button">💬<br>Chat</button><button id="bFiles" type="button">📁<br>Fichiers</button><button id="bAcc" type="button">🎨<br>Couleur</button><button id="bTheme" type="button">🌓<br>Thème</button></nav>
+<canvas id="fx" class="hidden"></canvas>
+<div id="lb" class="hidden"><img alt=""></div>
+<div id="toast" class="hidden" role="status"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.min.js"></script>
+<script>
+// ====== À MODIFIER : colle tes deux valeurs Supabase entre les guillemets ======
+const SUPABASE_URL = "https://vijupdhttlamcnueayeu.supabase.co";
+const SUPABASE_KEY = "sb_publishable_bd6HKQN5FWXy5Wo8FqdwUw_ZoOMJEDW";
+// ================================================================================
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const $ = id => document.getElementById(id);
+const MAX_MO = 10;
+let me = null, pseudoMe = "", mode = "login", seen = new Set(), lastDay = "", lastAuthor = "", channel = null, fresh = 0, unread = 0;
+function toast(t){ const el=$("toast"); el.textContent=t; el.classList.remove("hidden"); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.add("hidden"),3500); }
+function setError(t){ $("authError").textContent = t || ""; }
+function color(name){ let h=0; for(const c of name) h=(h*31+c.charCodeAt(0))%360; return `hsl(${h} 55% 40%)`; }
+function frError(m){
+  const s=(m||"").toLowerCase();
+  if(s.includes("invalid login")) return "E-mail ou mot de passe incorrect.";
+  if(s.includes("already")) return "Cette adresse e-mail a déjà un compte. Connecte-toi.";
+  if(s.includes("password")) return "Le mot de passe doit contenir au moins 6 caractères.";
+  if(s.includes("rate")||s.includes("seconds")) return "Trop d'essais. Attends une minute et réessaie.";
+  if(s.includes("fetch")||s.includes("network")) return "Pas de connexion. Vérifie ton réseau.";
+  return "Erreur : " + m;
+}
+/* ----- Connexion / inscription ----- */
+function setMode(m){
+  mode = m;
+  $("tab-login").setAttribute("aria-selected", m==="login");
+  $("tab-signup").setAttribute("aria-selected", m==="signup");
+  $("pseudoField").classList.toggle("hidden", m!=="signup");
+  $("pseudo").required = m==="signup";
+  $("authBtn").textContent = m==="login" ? "Se connecter" : "Créer mon compte";
+  $("password").autocomplete = m==="login" ? "current-password" : "new-password";
+  setError("");
+}
+$("tab-login").onclick = () => setMode("login");
+$("tab-signup").onclick = () => setMode("signup");
+$("authForm").onsubmit = async e => {
+  e.preventDefault(); setError("");
+  const email=$("email").value.trim(), password=$("password").value;
+  $("authBtn").disabled = true;
+  try{
+    if(mode==="signup"){
+      const pseudo=$("pseudo").value.trim();
+      if(pseudo.length<2){ setError("Le pseudo doit contenir au moins 2 caractères."); return; }
+      const {data,error}=await db.auth.signUp({email,password,options:{data:{pseudo}}});
+      if(error) throw error;
+      if(!data.session){ setError("Compte créé. Confirme ton e-mail, puis connecte-toi."); return; }
+      await start(data.user);
+    }else{
+      const {data,error}=await db.auth.signInWithPassword({email,password});
+      if(error) throw error;
+      await start(data.user);
+    }
+  }catch(err){ setError(frError(err.message)); }
+  finally{ $("authBtn").disabled = false; }
+};
+/* ----- Démarrage ----- */
+async function start(user){
+  me = user;
+  pseudoMe = (user.user_metadata && user.user_metadata.pseudo) || user.email.split("@")[0];
+  const {error} = await db.from("profils").upsert({id:user.id,pseudo:pseudoMe},{onConflict:"id",ignoreDuplicates:true});
+  if(error){ toast("Profil impossible à créer : "+error.message); }
+  $("meName").textContent = pseudoMe;
+  $("meAvatar").textContent = pseudoMe[0].toUpperCase();
+  $("auth").classList.add("hidden");
+  $("chat").classList.remove("hidden");
+  $("list").innerHTML = ""; seen = new Set(); lastDay = ""; lastAuthor = "";
+  const {data,error:e2} = await db.from("messages").select("*").order("cree_le",{ascending:false}).limit(100);
+  if(e2){ toast("Messages illisibles : "+e2.message); }
+  else if(!data.length){ $("list").innerHTML = '<p class="empty">Aucun message pour l\'instant. Écris le premier.</p>'; }
+  (data||[]).reverse().forEach(m => addMessage(m, true));
+  scrollDown();
+  if(channel) db.removeChannel(channel);
+  channel = db.channel("messages-live",{config:{presence:{key:me.id}}})
+    .on("postgres_changes",{event:"INSERT",schema:"public",table:"messages"}, p => addMessage(p.new,false))
+    .on("broadcast",{event:"typing"}, p => showTyping(p.payload.pseudo))
+    .on("presence",{event:"sync"}, renderOnline)
+    .subscribe(async s => { if(s==="SUBSCRIBED") await channel.track({pseudo:pseudoMe}); });
+}
+/* ----- Présence : qui est en ligne ----- */
+function renderOnline(){
+  const st = channel.presenceState(), box = $("online"); box.innerHTML = "";
+  const ids = Object.keys(st);
+  ids.forEach(id => {
+    const p = (st[id][0] && st[id][0].pseudo) || "?";
+    const it=document.createElement("div"); it.className="item";
+    const a=document.createElement("div"); a.className="avatar"; a.style.background=color(p); a.textContent=p[0].toUpperCase();
+    const d=document.createElement("i"); d.className="dot"; a.appendChild(d);
+    const n=document.createElement("b"); n.textContent=p+(id===me.id?" (toi)":"");
+    it.append(a,n); box.appendChild(it);
+  });
+  $("onTitle").textContent = "En ligne — "+ids.length;
+  $("cnt").textContent = "● "+ids.length+" en ligne";
+}
+/* ----- Affichage d'un message ----- */
+const isImg = n => /\.(png|jpe?g|gif|webp|avif)$/i.test(n||"");
+function richText(el, s){
+  s.split(/(https?:\/\/[^\s]+|@[\p{L}\p{N}_]+)/gu).forEach(p => {
+    if(/^https?:\/\//.test(p)){ const a=document.createElement("a"); a.href=p; a.target="_blank"; a.rel="noopener noreferrer"; a.textContent=p; el.appendChild(a); }
+    else if(p[0]==="@" && p.length>1){ const m=document.createElement("span"); m.className="men"; m.textContent=p; el.appendChild(m); }
+    else el.appendChild(document.createTextNode(p));
+  });
+}
+function addMessage(m, bulk){
+  if(seen.has(m.id)) return; seen.add(m.id);
+  const list=$("list"), empty=list.querySelector(".empty"); if(empty) empty.remove();
+  const d=new Date(m.cree_le), dayKey=d.toDateString();
+  const nearBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 140;
+  if(dayKey!==lastDay){
+    const s=document.createElement("div"); s.className="day";
+    s.textContent=d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+    list.appendChild(s); lastDay=dayKey; lastAuthor="";
+  }
+  const mine = m.auteur===me.id, first = lastAuthor!==m.auteur;
+  const row=document.createElement("div");
+  row.className="row"+(mine?" me":"")+(first?" first":"")+(m.fichier_url?" hasfile":"");
+  row.dataset.s=((m.pseudo||"")+" "+(m.texte||"")+" "+(m.fichier_nom||"")).toLowerCase();
+  const av=document.createElement("div"); av.className="av";
+  if(!mine && first){ const a=document.createElement("div"); a.className="avatar"; a.textContent=(m.pseudo||"?")[0].toUpperCase(); a.style.background=color(m.pseudo||"?"); av.appendChild(a); }
+  if(!mine) row.appendChild(av);
+  const box=document.createElement("div"); box.className="msg";
+  const meta=document.createElement("div"); meta.className="meta";
+  if(!mine && first){ const w=document.createElement("span"); w.className="who"; w.textContent=m.pseudo; w.style.color=color(m.pseudo); meta.appendChild(w); }
+  const tm=document.createElement("span"); tm.className="time";
+  tm.textContent=d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}); meta.appendChild(tm);
+  box.appendChild(meta);
+  if(m.fichier_url){
+    if(isImg(m.fichier_nom)){
+      const im=document.createElement("img"); im.src=m.fichier_url; im.alt=m.fichier_nom||"Image"; im.loading="lazy";
+      im.onload=()=>{ if(nearBottom||mine) scrollDown(); };
+      im.onclick=()=>{ $("lb").firstChild.src=m.fichier_url; $("lb").classList.remove("hidden"); };
+      box.appendChild(im);
+    }else{
+      const a=document.createElement("a"); a.className="file"; a.href=m.fichier_url; a.target="_blank"; a.rel="noopener"; a.download=m.fichier_nom||"";
+      a.innerHTML='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>';
+      const sp=document.createElement("span"); sp.textContent=m.fichier_nom||"Fichier"; a.appendChild(sp); box.appendChild(a);
+    }
+  }
+  if(m.texte){ const t=document.createElement("div"); t.className="txt"; richText(t, m.texte); box.appendChild(t); }
+  if(m.texte){ const c=document.createElement("button"); c.type="button"; c.className="cp"; c.textContent="Copier";
+    c.onclick=async()=>{ try{ await navigator.clipboard.writeText(m.texte); c.textContent="Copié ✓"; setTimeout(()=>c.textContent="Copier",1200); }catch(e){ toast("Copie impossible."); } }; box.appendChild(c); }
+  row.appendChild(box);
+  list.appendChild(row); lastAuthor=m.auteur;
+  applySearch(row);
+  if(!bulk){
+    if(nearBottom||mine) scrollDown();
+    else if(!mine){ fresh++; $("down").textContent="↓ "+fresh+" nouveau"+(fresh>1?"x":"")+" message"+(fresh>1?"s":""); $("down").classList.remove("hidden"); }
+    if(!mine && document.hidden){ unread++; document.title="("+unread+") CampusFlow.ISIPA"; }
+    if(!mine) beep();
+  }
+}
+function scrollDown(){ const l=$("list"); l.scrollTop=l.scrollHeight; fresh=0; $("down").classList.add("hidden"); }
+$("list").addEventListener("scroll",()=>{ const l=$("list"); if(l.scrollHeight-l.scrollTop-l.clientHeight<140){ fresh=0; $("down").classList.add("hidden"); } });
+$("down").onclick = scrollDown;
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden){ unread=0; document.title="CampusFlow.ISIPA"; } });
+/* ----- Recherche, onglets, thème, visionneuse ----- */
+function applySearch(r){ const q=$("q").value.trim().toLowerCase(); r.classList.toggle("hidden", !!q && !r.dataset.s.includes(q)); }
+$("q").oninput = () => document.querySelectorAll("#list .row").forEach(applySearch);
+function showTab(files){
+  $("pane").classList.toggle("files", files);
+  $("tFil").classList.toggle("on", files); $("tPub").classList.toggle("on", !files);
+  $("nFiles").classList.toggle("on", files); $("nChat").classList.toggle("on", !files);
+}
+$("tPub").onclick=$("nChat").onclick=()=>showTab(false);
+$("tFil").onclick=$("nFiles").onclick=()=>showTab(true);
+$("theme").onclick = () => {
+  const r=document.documentElement, dark=r.dataset.theme? r.dataset.theme==="dark" : matchMedia("(prefers-color-scheme:dark)").matches;
+  r.dataset.theme = dark ? "light" : "dark";
+};
+$("lb").onclick = () => $("lb").classList.add("hidden");
+document.addEventListener("keydown", e => { if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){ e.preventDefault(); $("q").focus(); } if(e.key==="Escape"){ $("lb").classList.add("hidden"); $("emp").classList.add("hidden"); } });
+/* ----- Couleurs, son, "en train d'écrire", confettis ----- */
+const ACC=[["#5b5fc7","#464eb8"],["#0f8a7e","#0b6b62"],["#d9480f","#b53a0a"],["#c2255c","#9c1b49"],["#1971c2","#14589a"]];
+let ai=0; try{ ai=+localStorage.getItem("cf-acc")||0; }catch(e){}
+function setAcc(i){ ai=i%ACC.length; const r=document.documentElement.style; r.setProperty("--brand",ACC[ai][0]); r.setProperty("--dark",ACC[ai][1]);
+  document.querySelector("header").style.background="linear-gradient(90deg,"+ACC[ai][1]+","+ACC[ai][0]+")";
+  try{ localStorage.setItem("cf-acc",ai); }catch(e){} }
+setAcc(ai);
+$("accent").onclick = () => setAcc(ai+1);
+let actx; function beep(){ try{ actx=actx||new AudioContext(); const o=actx.createOscillator(), g=actx.createGain(); o.frequency.value=880; g.gain.value=.05;
+  o.connect(g); g.connect(actx.destination); o.start(); g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+.18); o.stop(actx.currentTime+.2); }catch(e){} }
+let tyT, lastTy=0;
+function showTyping(p){ if(p===pseudoMe) return; $("typing").textContent=p+" est en train d'écrire…"; clearTimeout(tyT); tyT=setTimeout(()=>$("typing").textContent="",2500); }
+function confetti(){
+  const c=$("fx"); c.classList.remove("hidden"); c.width=innerWidth; c.height=innerHeight; const x=c.getContext("2d"),t0=performance.now();
+  const ps=Array.from({length:90},()=>({x:Math.random()*c.width,y:-20,vx:Math.random()*4-2,vy:Math.random()*4+3,c:"hsl("+Math.random()*360+" 80% 55%)"}));
+  (function f(t){ x.clearRect(0,0,c.width,c.height); ps.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; x.fillStyle=p.c; x.fillRect(p.x,p.y,8,12); });
+    if(t-t0<2200) requestAnimationFrame(f); else c.classList.add("hidden"); })(t0);
+}
+/* ----- Barre du bas (mobile) ----- */
+[["bChat","nChat"],["bFiles","nFiles"],["bAcc","accent"],["bTheme","theme"]].forEach(([b,n]) => $(b).onclick = () => {
+  $(n).click(); if(b==="bChat"||b==="bFiles"){ $("bChat").classList.toggle("on",b==="bChat"); $("bFiles").classList.toggle("on",b==="bFiles"); } });
+/* ----- Emojis ----- */
+const ta=$("text");
+"😀😂😍😎🥳😭🙏👍👏🔥❤️🎉💡📚✅❓😅🤝💪🎓".match(/\p{Extended_Pictographic}\uFE0F?|✅/gu).forEach(e => {
+  const b=document.createElement("button"); b.type="button"; b.textContent=e;
+  b.onclick=()=>{ ta.value+=e; ta.focus(); $("emp").classList.add("hidden"); };
+  $("emp").appendChild(b);
+});
+$("emo").onclick = () => $("emp").classList.toggle("hidden");
+/* ----- Envoi ----- */
+async function sendMessage(texte, fichier){
+  const row={auteur:me.id,pseudo:pseudoMe,texte:texte||null,fichier_url:fichier?fichier.url:null,fichier_nom:fichier?fichier.nom:null};
+  const {error}=await db.from("messages").insert(row);
+  if(error) toast("Envoi impossible : "+error.message);
+}
+ta.addEventListener("input",()=>{ if(channel && Date.now()-lastTy>1500){ lastTy=Date.now(); channel.send({type:"broadcast",event:"typing",payload:{pseudo:pseudoMe}}); } ta.style.height="auto"; ta.style.height=Math.min(ta.scrollHeight,140)+"px"; });
+ta.addEventListener("keydown",e=>{
+  if(e.key==="Enter" && !e.shiftKey && matchMedia("(pointer:fine)").matches){ e.preventDefault(); $("composer").requestSubmit(); }
+});
+$("composer").onsubmit = async e => {
+  e.preventDefault();
+  const t=ta.value.trim(); if(!t) return;
+  ta.value=""; ta.style.height="auto"; ta.focus(); $("emp").classList.add("hidden");
+  if(t.includes("🎉")) confetti();
+  await sendMessage(t);
+};
+async function upload(f){
+  if(!f) return;
+  if(f.size>MAX_MO*1024*1024){ toast("Fichier trop lourd (maximum "+MAX_MO+" Mo)."); return; }
+  $("attach").disabled=true; toast("Envoi du fichier…");
+  try{
+    const ext=(f.name.split(".").pop()||"bin").toLowerCase().replace(/[^a-z0-9]/g,"").slice(0,8)||"bin";
+    const path=`${me.id}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+    const {error}=await db.storage.from("fichiers").upload(path,f,{contentType:f.type||"application/octet-stream"});
+    if(error) throw error;
+    const url=db.storage.from("fichiers").getPublicUrl(path).data.publicUrl;
+    await sendMessage(ta.value.trim(), {url,nom:f.name});
+    ta.value=""; ta.style.height="auto";
+    $("toast").classList.add("hidden");
+  }catch(err){ toast("Échec de l'envoi : "+err.message); }
+  finally{ $("attach").disabled=false; }
+}
+$("attach").onclick = () => $("fileInput").click();
+$("fileInput").onchange = e => { const f=e.target.files[0]; e.target.value=""; upload(f); };
+const pane=$("pane");
+pane.addEventListener("dragover",e=>{ e.preventDefault(); pane.classList.add("drag"); });
+pane.addEventListener("dragleave",e=>{ if(e.target===pane) pane.classList.remove("drag"); });
+pane.addEventListener("drop",e=>{ e.preventDefault(); pane.classList.remove("drag"); upload(e.dataTransfer.files[0]); });
+ta.addEventListener("paste",e=>{ const f=[...(e.clipboardData.files||[])][0]; if(f){ e.preventDefault(); upload(f); } });
+/* ----- Déconnexion et lancement ----- */
+$("logout").onclick = async () => {
+  if(channel){ db.removeChannel(channel); channel=null; }
+  await db.auth.signOut(); me=null;
+  $("chat").classList.add("hidden"); $("auth").classList.remove("hidden");
+  $("password").value="";
+};
+(async () => {
+  const {data}=await db.auth.getSession();
+  if(data.session) await start(data.session.user);
+  else $("auth").classList.remove("hidden");
+})();
+</script>
+</body>
+</html>
